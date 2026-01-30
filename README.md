@@ -20,7 +20,6 @@ The application includes the following core functionalities as per the project g
 * **Version Control:** GitHub
 
 ## Team Details
-**Group ID:** [Insert Group Number if available]
 
 | Index No | Registration No |         Name        |                        GitHub Profile                             |
 | :---     | :---            | :---                | :---                                                              |
