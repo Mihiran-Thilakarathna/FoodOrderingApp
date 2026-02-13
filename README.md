@@ -22,9 +22,9 @@ The application includes the following core functionalities as per the project g
 ## Team Details
 
 | Index No | Registration No |         Name        |                        GitHub Profile                             |
-| :---     | :---            | :---                | :---                                                              |
+|----------|-----------------|---------------------|- -----------------------------------------------------------------|
 | 5707     | ICT/2022/104    | T.H.M.Thilakarathna | [Mihiran-Thilakarathna](https://github.com/Mihiran-Thilakarathna) |
 | 5708     | ICT/2022/105    | M.I Afthal Ahamad   | [afthal-ahamad01](https://github.com/afthal-ahamad01)             |
-| [Index]  | [Reg No]        | [Name of Member 3]  |               [GitHub Link]                                       |
+| 5709     | ICT/2022/106    | M.A.F Nuha          | [nuha-akil](https://github.com/nuha-akil)                         |
 
----
+
