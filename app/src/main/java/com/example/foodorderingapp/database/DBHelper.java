@@ -3,6 +3,8 @@ package com.example.foodorderingapp.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues;
+import android.database.Cursor;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -67,5 +69,42 @@ public class DBHelper extends SQLiteOpenHelper {
         // Member 02 will customize this later, but let's add one example
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Burger', 'Spicy chicken with cheese', 450.00)");
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Veg Pizza', 'Large cheese pizza with olives', 1200.00)");
+    }
+
+    // --- NEW METHODS FOR USER REGISTRATION ---
+
+    // Insert User Logic
+    public boolean registerUser(String username, String email, String password, String phone) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COL_USERNAME, username);
+        values.put(COL_PASSWORD, password); // This should be the encrypted password
+        values.put("email", email);
+        values.put("phone", phone);
+
+        long result = db.insert(TABLE_USERS, null, values);
+
+        // If result is -1, insertion failed
+        return result != -1;
+    }
+
+    // Check if user already exists
+    public boolean checkUsername(String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ?", new String[]{username});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+    // Check Username and Password (Login Logic)
+    public boolean checkUser(String username, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Querying with the password
+        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ? and password = ?", new String[]{username, password});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
     }
 }
