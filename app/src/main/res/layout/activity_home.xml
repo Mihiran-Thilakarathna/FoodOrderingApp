@@ -2,22 +2,32 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_home_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".MainActivity"> <TextView
+    android:id="@+id/tv_home_title"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:text="Menu"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    android:textColor="@android:color/black"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/btnProfile" />
 
-    <!-- Header / Title optional but good for "student-level UI" -->
-    <TextView
-        android:id="@+id/tv_home_title"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Menu"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:text="My Profile"
+        android:backgroundTint="#FF5722"
+        android:textColor="@android:color/white"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView

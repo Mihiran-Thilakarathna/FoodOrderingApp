@@ -107,4 +107,13 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return exists;
     }
+
+    // Get User Details by Username
+    public android.database.Cursor getUserDetails(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Query to select all details for the specific username
+        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ?", new String[]{username});
+        return cursor;
+    }
+
 }

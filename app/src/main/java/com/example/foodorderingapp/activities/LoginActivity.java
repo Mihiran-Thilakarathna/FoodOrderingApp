@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.foodorderingapp.MainActivity;
 import com.example.foodorderingapp.R;
 import com.example.foodorderingapp.database.DBHelper;
+import com.example.foodorderingapp.utils.SessionManager;
 import java.security.MessageDigest;
 
 public class LoginActivity extends AppCompatActivity {
@@ -20,10 +21,24 @@ public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     TextView tvRegister;
     DBHelper dbHelper;
+    SessionManager sessionManager; // Declare SessionManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 1. Initialize SessionManager
+        sessionManager = new SessionManager(getApplicationContext());
+
+        // 2. Check if user is already logged in (Auto-Login Check)
+        if (sessionManager.isLoggedIn()) {
+            // User is already logged in, redirect to Main Activity
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Close Login Activity so user can't go back
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
         dbHelper = new DBHelper(this);
@@ -43,18 +58,22 @@ public class LoginActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
                     Toast.makeText(LoginActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 } else {
-                    // 1. Encrypt the entered password to match DB
+                    // Encrypt password
                     String encryptedPass = hashPassword(pass);
 
-                    // 2. Check DB
+                    // Check DB for valid credentials
                     boolean check = dbHelper.checkUser(user, encryptedPass);
+
                     if (check) {
+                        // 3. Login Success - Create Login Session
+                        sessionManager.createLoginSession(user);
+
                         Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
-                        // Navigate to Main Activity (Home)
+                        // Navigate to Main Activity
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
-                        finish(); // Close login activity
+                        finish();
                     } else {
                         Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                     }
@@ -72,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // SHA-256 Hashing (Same as Register Activity)
+    // SHA-256 Hashing Logic
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
