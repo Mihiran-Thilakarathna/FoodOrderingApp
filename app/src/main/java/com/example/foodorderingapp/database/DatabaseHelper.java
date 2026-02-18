@@ -2,8 +2,15 @@ package com.example.foodorderingapp.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.foodorderingapp.models.FoodModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * DatabaseHelper for Menu Management.
@@ -68,4 +75,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_IMAGE, image);
         db.insert(TABLE_FOOD, null, values);
     }
+
+    /**
+     * Method to fetch all food items from the database.
+     * @return List of FoodModel objects.
+     */
+    public List<FoodModel> getAllFood() {
+        List<FoodModel> foodList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_FOOD, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION));
+                double price = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRICE));
+                String image = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE));
+
+                FoodModel food = new FoodModel(id, name, description, price, image);
+                foodList.add(food);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return foodList;
+    }
 }
+
