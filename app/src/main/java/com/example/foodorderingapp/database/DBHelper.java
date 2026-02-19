@@ -116,4 +116,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    // Method to retrieve all food items from the 'food_items' table
+    public Cursor getAllFoodItems() {
+        // Get database instance in readable mode
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Execute raw SQL query to fetch all rows
+        return db.rawQuery("SELECT * FROM " + TABLE_FOOD, null);
+    }
+
 }

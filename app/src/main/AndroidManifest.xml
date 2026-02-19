@@ -33,6 +33,10 @@
             android:name=".activities.ProfileActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activities.FoodDetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
