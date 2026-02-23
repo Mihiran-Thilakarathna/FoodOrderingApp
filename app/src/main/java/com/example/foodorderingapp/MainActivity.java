@@ -3,78 +3,102 @@ package com.example.foodorderingapp;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.MenuItem;
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.foodorderingapp.activities.LoginActivity;
 import com.example.foodorderingapp.activities.ProfileActivity;
 import com.example.foodorderingapp.adapters.FoodAdapter;
 import com.example.foodorderingapp.database.DBHelper;
 import com.example.foodorderingapp.models.FoodModel;
 import com.example.foodorderingapp.utils.SessionManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // UI and Core Components Declaration
-    Button btnProfile;
+    // Component Declarations
     SessionManager sessionManager;
     RecyclerView recyclerView;
     DBHelper dbHelper;
     List<FoodModel> foodList;
     FoodAdapter adapter;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        // Set the integrated home layout containing the RecyclerView
+        // Link the activity to the modernized home layout
         setContentView(R.layout.activity_home);
 
-        // 1. Session check: Redirect to Login screen if the user is not authenticated
+        // --- SESSION VERIFICATION ---
         sessionManager = new SessionManager(getApplicationContext());
         if (!sessionManager.isLoggedIn()) {
+            // Redirect to LoginActivity if the user is not authenticated
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Prevent user from going back to MainActivity
+            finish(); // Prevent returning to this screen via back button
             return;
         }
 
-        // 2. Setup Profile Navigation Button
-        btnProfile = findViewById(R.id.btnProfile);
-        btnProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        // 3. Setup RecyclerView for Food Menu display
+        // --- RECYCLER VIEW SETUP ---
+        // Initialize RecyclerView to display the list of food items
         recyclerView = findViewById(R.id.recycler_view_food);
-        // Use LinearLayoutManager to display items in a standard vertical list
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize database helper and the array list for storing food data
+        // Initialize Database Helper and the list to hold food data
         dbHelper = new DBHelper(this);
         foodList = new ArrayList<>();
 
-        // 4. Fetch data from SQLite Database
+        // Fetch data from SQLite and populate the list
         loadFoodData();
 
-        // 5. Initialize the custom adapter and attach it to the RecyclerView
+        // Attach the custom adapter to the RecyclerView
         adapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(adapter);
 
-        // Handle system UI padding (status bar, navigation bar)
+        // --- BOTTOM NAVIGATION BAR SETUP ---
+        // Initialize the bottom navigation menu
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // Handle clicks on different menu items (Home, Cart, Orders, Profile)
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_home) {
+                    // Already on the Home screen, do nothing
+                    return true;
+                } else if (id == R.id.nav_cart) {
+                    // TODO: Member 03 - Navigate to CartActivity
+                    return true;
+                } else if (id == R.id.nav_orders) {
+                    // TODO: Member 03 - Navigate to OrdersActivity
+                    return true;
+                } else if (id == R.id.nav_profile) {
+                    // Navigate to the User Profile screen
+                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // Handle system UI insets (status bar, navigation bar) to avoid overlapping
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_home_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -82,24 +106,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Custom method to fetch food items from DB and populate the ArrayList
+    /**
+     * Helper method to fetch food items from the SQLite database
+     * and add them to the foodList array.
+     */
     private void loadFoodData() {
         Cursor cursor = dbHelper.getAllFoodItems();
 
-        // Move cursor to the first row and iterate through all rows
+        // Ensure the cursor is at the first row before extracting data
         if (cursor.moveToFirst()) {
             do {
-                // Extract data from the current row in the cursor
+                // Extract values from the current row
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
                 String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
                 String desc = cursor.getString(cursor.getColumnIndexOrThrow("description"));
                 double price = cursor.getDouble(cursor.getColumnIndexOrThrow("price"));
 
-                // Create a new FoodModel object and add it to the list
+                // Add a new FoodModel object to the list
                 foodList.add(new FoodModel(id, name, desc, price));
-            } while (cursor.moveToNext());
+            } while (cursor.moveToNext()); // Move to the next row until all are read
         }
-        // Close the cursor to prevent memory leaks
+
+        // Close the cursor to free up memory resources
         cursor.close();
     }
 }
