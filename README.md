@@ -1,4 +1,4 @@
-# Food Ordering App - ICT3214 Group Project 🍔📱
+# Food Ordering App - ICT3214 Group Project 🍔📱 
 
 ## 📌 Project Overview
 
@@ -45,11 +45,11 @@ com.example.foodorderingapp
 
 ## 👥 Team Details & Work Breakdown
 
-| Index No | Registration No | Name                 | Role & Core Responsibilities                                                                     | GitHub Profile         |
-| -------- | --------------- | -------------------- | ------------------------------------------------------------------------------------------------ | ---------------------- |
-| 5707     | ICT/2022/104    | T.H.M. Thilakarathna | Auth & Integration: Login/Register, SHA-256 Encryption, Session Management, App Integrator       | @Mihiran-Thilakarathna |
-| 5708     | ICT/2022/105    | M.I Afthal Ahamad    | Menu & Dashboard: Home UI, Food Detail View, RecyclerView setup, SQLite Food Seeding             | @afthal-ahamad01       |
-| 5709     | ICT/2022/106    | M.A.F Nuha           | Cart & Orders: Cart UI, Order Confirmation, Order History tracking, User-specific data filtering | @nuha-akil             |
+| Index No | Registration No | Name                 | Role & Core Responsibilities                                                                     | GitHub Profile                                                     |
+| -------- | --------------- | -------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| 5707     | ICT/2022/104    | T.H.M. Thilakarathna | Auth & Integration: Login/Register, SHA-256 Encryption, Session Management, App Integrator       | [@Mihiran-Thilakarathna](https://github.com/Mihiran-Thilakarathna) |
+| 5708     | ICT/2022/105    | M.I Afthal Ahamad    | Menu & Dashboard: Home UI, Food Detail View, RecyclerView setup, SQLite Food Seeding             | [@afthal-ahamad01](https://github.com/afthal-ahamad01)             |
+| 5709     | ICT/2022/106    | M.A.F Nuha           | Cart & Orders: Cart UI, Order Confirmation, Order History tracking, User-specific data filtering | [@nuha-akil](https://github.com/nuha-akil)                         |
 
 ---
 
@@ -57,9 +57,9 @@ com.example.foodorderingapp
 
 1. Clone this repository
 
-   ```
-   git clone https://github.com/Mihiran-Thilakarathna/FoodOrderingApp.git
-   ```
+```
+git clone https://github.com/Mihiran-Thilakarathna/FoodOrderingApp.git
+```
 
 2. Open the project in **Android Studio**
 
@@ -67,8 +67,8 @@ com.example.foodorderingapp
 
 4. Build and Run the application on:
 
-   * Android Emulator OR
-   * Physical Android device
+* Android Emulator OR
+* Physical Android device
 
 ---
 
