@@ -37,6 +37,15 @@
             android:name=".activities.FoodDetailActivity"
             android:exported="false" />
 
+        <activity android:name=".activities.CartActivity"
+            android:exported="false" />
+
+        <activity android:name=".activities.MyOrderActivity"
+            android:exported="false" />
+
+        <activity android:name=".activities.OrderConfirmActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

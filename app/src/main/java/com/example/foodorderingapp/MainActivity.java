@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodorderingapp.activities.LoginActivity;
+import com.example.foodorderingapp.activities.MyOrderActivity;
 import com.example.foodorderingapp.activities.ProfileActivity;
 import com.example.foodorderingapp.adapters.FoodAdapter;
 import com.example.foodorderingapp.database.DBHelper;
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                     // TODO: Member 03 - Navigate to CartActivity
                     return true;
                 } else if (id == R.id.nav_orders) {
-                    // TODO: Member 03 - Navigate to OrdersActivity
+                    Intent intent = new Intent(MainActivity.this, MyOrderActivity.class);
+                    startActivity(intent);
                     return true;
                 } else if (id == R.id.nav_profile) {
                     // Navigate to the User Profile screen

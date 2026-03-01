@@ -72,7 +72,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/subtotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sub Total"
@@ -85,7 +85,7 @@
         app:layout_constraintVertical_bias="0.125" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/serviceCharge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Servie Charge"
@@ -98,7 +98,7 @@
         app:layout_constraintVertical_bias="0.196" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Total"

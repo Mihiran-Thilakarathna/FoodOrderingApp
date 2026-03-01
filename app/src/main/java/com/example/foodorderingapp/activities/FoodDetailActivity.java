@@ -33,6 +33,7 @@ public class FoodDetailActivity extends AppCompatActivity {
         String name = intent.getStringExtra("FOOD_NAME");
         String desc = intent.getStringExtra("FOOD_DESC");
         double price = intent.getDoubleExtra("FOOD_PRICE", 0.0);
+        int foodId = intent.getIntExtra("FOOD_ID", -1);
 
         // Set the retrieved data to the respective TextViews to display to the user
         tvName.setText(name);
@@ -49,6 +50,31 @@ public class FoodDetailActivity extends AppCompatActivity {
                 // Close the current detail activity and return to the main menu
                 finish();
             }
+        });
+
+        btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent cartIntent = new Intent(FoodDetailActivity.this, CartActivity.class);
+
+                // Pass data to CartActivity
+                cartIntent.putExtra("FOOD_NAME", name);
+                cartIntent.putExtra("FOOD_PRICE", price);
+
+                startActivity(cartIntent);
+            }
+        });
+
+        btnAddToCart.setOnClickListener(v -> {
+
+            Intent cartIntent = new Intent(FoodDetailActivity.this, CartActivity.class);
+
+            cartIntent.putExtra("FOOD_ID", foodId);
+            cartIntent.putExtra("FOOD_NAME", name);
+            cartIntent.putExtra("FOOD_PRICE", price);
+
+            startActivity(cartIntent);
         });
     }
 }
