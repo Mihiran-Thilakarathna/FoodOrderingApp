@@ -125,4 +125,22 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + TABLE_FOOD, null);
     }
 
+    // Insert Order
+    public boolean insertOrder(String username, int foodId, int quantity, double totalPrice, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("username", username);
+        values.put("food_id", foodId);
+        values.put("quantity", quantity);
+        values.put("total_price", totalPrice);
+        values.put("status", status);
+
+        long result = db.insert(TABLE_ORDERS, null, values);
+        return result != -1;
+    }
+
+    public Cursor getUserOrders(String username) {
+        return null;
+    }
 }

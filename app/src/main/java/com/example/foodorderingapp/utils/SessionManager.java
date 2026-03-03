@@ -76,4 +76,8 @@ public class SessionManager {
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(IS_LOGIN, false);
     }
+
+    public String getUserName() {
+        return "";
+    }
 }
