@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass = etPassword.getText().toString();
                 String confirmPass = etConfirmPass.getText().toString();
 
-                // 1. Input Validation: Check for empty fields
+                // Input Validation: Check for empty fields
                 if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(email)) {
                     Toast.makeText(RegisterActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 } else {
@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
                         // Check if the username already exists in the database
                         if (!dbHelper.checkUsername(user)) {
 
-                            // 2. Encrypt Password (MANDATORY Guideline using SHA-256)
+                            // Encrypt Password (MANDATORY Guideline using SHA-256)
                             String encryptedPass = hashPassword(pass);
 
                             // 3. Save the new user details to SQLite Database

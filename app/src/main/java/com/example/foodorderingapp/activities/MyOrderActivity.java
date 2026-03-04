@@ -27,11 +27,12 @@ public class MyOrderActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         sessionManager = new SessionManager(this);
 
-        String username = sessionManager.getUserName();
+        String username = sessionManager.getUsername();
 
         Cursor cursor = dbHelper.getUserOrders(username);
 
-        if (cursor.moveToFirst()) {
+        // Added null check
+        if (cursor != null && cursor.moveToFirst()) {
             String name = cursor.getString(0);
             String orderStatus = cursor.getString(1);
 
@@ -39,6 +40,9 @@ public class MyOrderActivity extends AppCompatActivity {
             status.setText(orderStatus);
         }
 
-        cursor.close();
+        // Safely close the cursor
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 }

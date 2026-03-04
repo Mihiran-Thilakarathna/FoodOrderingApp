@@ -32,7 +32,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "email TEXT, " +
                 "phone TEXT)");
 
-        // 2. Create Food Items Table (For Member 02)
+        // Create Food Items Table
         MyDB.execSQL("create Table " + TABLE_FOOD + "(" +
                 "id INTEGER primary key autoincrement, " +
                 "name TEXT, " +
@@ -40,7 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "price DOUBLE, " +
                 "image_resource INTEGER)"); // We can store drawable ID for simplicity
 
-        // 3. Create Orders Table (For Member 03) - WITH FOREIGN KEY
+        // Create Orders Table WITH FOREIGN KEY
         // Linking orders to a specific user (username)
         MyDB.execSQL("create Table " + TABLE_ORDERS + "(" +
                 "order_id INTEGER primary key autoincrement, " +
@@ -52,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(username) REFERENCES " + TABLE_USERS + "(username), " +
                 "FOREIGN KEY(food_id) REFERENCES " + TABLE_FOOD + "(id))");
 
-        // Optional: Pre-insert some food items (Seeding)
+        // Pre-insert some food items (Seeding)
         seedFoodItems(MyDB);
     }
 
@@ -71,7 +71,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Veg Pizza', 'Large cheese pizza with olives', 1200.00)");
     }
 
-    // --- NEW METHODS FOR USER REGISTRATION ---
 
     // Insert User Logic
     public boolean registerUser(String username, String email, String password, String phone) {
@@ -140,7 +139,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    // Fetch User Orders with Food Name (Fixed Null Error)
     public Cursor getUserOrders(String username) {
-        return null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT f.name, o.status FROM " + TABLE_ORDERS + " o " +
+                "INNER JOIN " + TABLE_FOOD + " f ON o.food_id = f.id " +
+                "WHERE o.username = ?";
+        return db.rawQuery(query, new String[]{username});
     }
 }

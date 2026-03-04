@@ -40,7 +40,7 @@ public class FoodDetailActivity extends AppCompatActivity {
         tvDesc.setText(desc);
         tvPrice.setText("Rs. " + price);
 
-        // Setup click listener for the 'Add to Cart' button (Future Task for Member 03)
+        // Setup click listener for the 'Add to Cart' button
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                     boolean check = dbHelper.checkUser(user, encryptedPass);
 
                     if (check) {
-                        // 3. Login Success - Create Login Session
+                        //Login Success - Create Login Session
                         sessionManager.createLoginSession(user);
 
                         Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();

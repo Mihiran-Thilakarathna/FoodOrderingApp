@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.foodorderingapp.activities.CartActivity;
 import com.example.foodorderingapp.activities.LoginActivity;
 import com.example.foodorderingapp.activities.MyOrderActivity;
 import com.example.foodorderingapp.activities.ProfileActivity;
@@ -84,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
                     // Already on the Home screen, do nothing
                     return true;
                 } else if (id == R.id.nav_cart) {
-                    // TODO: Member 03 - Navigate to CartActivity
+                    // Navigate to CartActivity
+                    Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                    startActivity(intent);
                     return true;
                 } else if (id == R.id.nav_orders) {
                     Intent intent = new Intent(MainActivity.this, MyOrderActivity.class);
