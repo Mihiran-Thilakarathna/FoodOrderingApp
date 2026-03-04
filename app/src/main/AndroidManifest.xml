@@ -13,13 +13,17 @@
         android:theme="@style/Theme.FoodOrderingApp">
 
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
 
         <activity
             android:name=".activities.RegisterActivity"
@@ -37,13 +41,16 @@
             android:name=".activities.FoodDetailActivity"
             android:exported="false" />
 
-        <activity android:name=".activities.CartActivity"
+        <activity
+            android:name=".activities.CartActivity"
             android:exported="false" />
 
-        <activity android:name=".activities.MyOrderActivity"
+        <activity
+            android:name=".activities.MyOrderActivity"
             android:exported="false" />
 
-        <activity android:name=".activities.OrderConfirmActivity"
+        <activity
+            android:name=".activities.OrderConfirmActivity"
             android:exported="false" />
 
     </application>
