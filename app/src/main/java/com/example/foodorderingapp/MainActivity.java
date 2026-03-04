@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // --- TOP RIGHT PROFILE ICON CLICK LISTENER ---
+        ImageView imgTopProfile = findViewById(R.id.imgTopProfile);
+        imgTopProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
         // --- RECYCLER VIEW SETUP ---
         // Initialize RecyclerView to display the list of food items
         recyclerView = findViewById(R.id.recycler_view_food);
@@ -75,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         // Initialize the bottom navigation menu
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        // Set the Home item as explicitly selected when activity loads
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+
         // Handle clicks on different menu items (Home, Cart, Orders, Profile)
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -88,15 +99,18 @@ public class MainActivity extends AppCompatActivity {
                     // Navigate to CartActivity
                     Intent intent = new Intent(MainActivity.this, CartActivity.class);
                     startActivity(intent);
+                    overridePendingTransition(0, 0); // Remove animation for smooth tab switching
                     return true;
                 } else if (id == R.id.nav_orders) {
                     Intent intent = new Intent(MainActivity.this, MyOrderActivity.class);
                     startActivity(intent);
+                    overridePendingTransition(0, 0);
                     return true;
                 } else if (id == R.id.nav_profile) {
                     // Navigate to the User Profile screen
                     Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                     startActivity(intent);
+                    overridePendingTransition(0, 0);
                     return true;
                 }
                 return false;

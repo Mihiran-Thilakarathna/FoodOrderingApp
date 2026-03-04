@@ -2,19 +2,25 @@ package com.example.foodorderingapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.foodorderingapp.MainActivity;
 import com.example.foodorderingapp.R;
 import com.example.foodorderingapp.database.DBHelper;
 import com.example.foodorderingapp.utils.SessionManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class CartActivity extends AppCompatActivity {
 
     TextView foodName, foodPrice, subTotal, serviceCharge, total;
     Button placeOrderBtn;
+    BottomNavigationView bottomNavigationView;
 
     DBHelper dbHelper;
     SessionManager sessionManager;
@@ -71,6 +77,41 @@ public class CartActivity extends AppCompatActivity {
                 finish();
             } else {
                 Toast.makeText(this, "Order Failed!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // --- BOTTOM NAVIGATION BAR SETUP ---
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_cart); // Highlight Cart Icon
+
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_home) {
+                    Intent intent = new Intent(CartActivity.this, MainActivity.class);
+                    // Clear the back stack to avoid multiple main activities
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    return true;
+                } else if (id == R.id.nav_cart) {
+                    return true;
+                } else if (id == R.id.nav_orders) {
+                    Intent intent = new Intent(CartActivity.this, MyOrderActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    finish(); // Optional: finish current activity so back stack doesn't grow infinitely
+                    return true;
+                } else if (id == R.id.nav_profile) {
+                    Intent intent = new Intent(CartActivity.this, ProfileActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    finish();
+                    return true;
+                }
+                return false;
             }
         });
     }
