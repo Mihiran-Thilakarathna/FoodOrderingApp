@@ -52,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(username) REFERENCES " + TABLE_USERS + "(username), " +
                 "FOREIGN KEY(food_id) REFERENCES " + TABLE_FOOD + "(id))");
 
-        // Pre-insert some food items (Seeding)
+        // Pre-insert 20 Sri Lankan & Popular food items (Seeding)
         seedFoodItems(MyDB);
     }
 
@@ -64,13 +64,31 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(MyDB);
     }
 
-    // Method to insert initial food data
+    // Method to insert initial 20 food data items
     private void seedFoodItems(SQLiteDatabase db) {
-        // Member 02 will customize this later, but let's add one example
-        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Burger', 'Spicy chicken with cheese', 450.00)");
-        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Veg Pizza', 'Large cheese pizza with olives', 1200.00)");
-    }
+        // Sri Lankan and Popular Items with prices in Rs.
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Kottu', 'Spicy Sri Lankan street food with chicken', 850.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Cheese Kottu', 'Creamy cheese kottu with roasted chicken', 1200.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Fried Rice', 'Basmati rice wok-tossed with chicken and veggies', 900.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Nasi Goreng', 'Indonesian style spicy rice topped with a fried egg', 1100.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Biryani', 'Aromatic spiced rice served with chicken and egg', 1350.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('String Hoppers (10 pcs)', 'Served with dhal, coconut sambol and chicken curry', 450.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Plain Hoppers (5 pcs)', 'Crispy plain hoppers served with lunu miris', 250.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Egg Hopper', 'Crispy hopper with a soft baked egg inside', 100.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Lamprais', 'Traditional Dutch burgher meal wrapped in banana leaf', 1500.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Roast Paan & Curry', 'Wood-fired roast bread with spicy pork or chicken curry', 650.00)");
 
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Burger', 'Crispy chicken patty with fresh lettuce and mayo', 650.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Double Cheese Burger', 'Double beef patty with melted cheese and pickles', 1250.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Spicy Chicken Sub', 'Footlong submarine sandwich with spicy chicken fillings', 950.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('BBQ Chicken Pizza', 'Large pizza topped with BBQ chicken, onions and cheese', 2200.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Margherita Pizza', 'Classic medium pizza with fresh tomatoes and mozzarella', 1500.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Fish Roll', 'Crispy crumbed roll stuffed with spicy fish and potato', 120.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Vegetable Roti', 'Spicy vegetable mix folded into a triangular flatbread', 80.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Samosa', 'Crispy pastry filled with minced chicken and peas', 100.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Isso Vade', 'Crispy lentil patty topped with spicy fried prawns', 150.00)");
+        db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chocolate Biscuit Pudding', 'Classic Sri Lankan dessert layered with chocolate', 400.00)");
+    }
 
     // Insert User Logic
     public boolean registerUser(String username, String email, String password, String phone) {
@@ -78,13 +96,11 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(COL_USERNAME, username);
-        values.put(COL_PASSWORD, password); // This should be the encrypted password
+        values.put(COL_PASSWORD, password);
         values.put("email", email);
         values.put("phone", phone);
 
         long result = db.insert(TABLE_USERS, null, values);
-
-        // If result is -1, insertion failed
         return result != -1;
     }
 
@@ -100,7 +116,6 @@ public class DBHelper extends SQLiteOpenHelper {
     // Check Username and Password (Login Logic)
     public boolean checkUser(String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
-        // Querying with the password
         Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ? and password = ?", new String[]{username, password});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
@@ -110,17 +125,13 @@ public class DBHelper extends SQLiteOpenHelper {
     // Get User Details by Username
     public android.database.Cursor getUserDetails(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        // Query to select all details for the specific username
         Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ?", new String[]{username});
         return cursor;
     }
 
     // Method to retrieve all food items from the 'food_items' table
     public Cursor getAllFoodItems() {
-        // Get database instance in readable mode
         SQLiteDatabase db = this.getReadableDatabase();
-
-        // Execute raw SQL query to fetch all rows
         return db.rawQuery("SELECT * FROM " + TABLE_FOOD, null);
     }
 

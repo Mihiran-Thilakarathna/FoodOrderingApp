@@ -28,7 +28,7 @@ public class FoodDetailActivity extends AppCompatActivity {
         tvDesc = findViewById(R.id.tvDetailDesc);
         btnAddToCart = findViewById(R.id.btnAddToCart);
 
-        // Retrieve the data passed from the FoodAdapter via Intent Extras
+        // Retrieve the data passed from the FoodAdapter or MainActivity via Intent Extras
         Intent intent = getIntent();
         String name = intent.getStringExtra("FOOD_NAME");
         String desc = intent.getStringExtra("FOOD_DESC");
@@ -38,43 +38,30 @@ public class FoodDetailActivity extends AppCompatActivity {
         // Set the retrieved data to the respective TextViews to display to the user
         tvName.setText(name);
         tvDesc.setText(desc);
-        tvPrice.setText("Rs. " + price);
 
+        // NEW: Format the price to show decimals clearly (e.g., Rs. 225.00)
+        tvPrice.setText(String.format("Rs. %.2f", price));
+
+        // --- FIXED: Merged multiple btnAddToCart click listeners into one clean listener ---
         // Setup click listener for the 'Add to Cart' button
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Currently displaying a Toast message. Actual cart logic will be implemented here later.
+                // Displaying a Toast message to confirm item is added
                 Toast.makeText(FoodDetailActivity.this, name + " added to cart!", Toast.LENGTH_SHORT).show();
+
+                // Intent to pass data to CartActivity
+                Intent cartIntent = new Intent(FoodDetailActivity.this, CartActivity.class);
+                cartIntent.putExtra("FOOD_ID", foodId);
+                cartIntent.putExtra("FOOD_NAME", name);
+                cartIntent.putExtra("FOOD_PRICE", price);
+
+                // Navigate to CartActivity
+                startActivity(cartIntent);
 
                 // Close the current detail activity and return to the main menu
                 finish();
             }
-        });
-
-        btnAddToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent cartIntent = new Intent(FoodDetailActivity.this, CartActivity.class);
-
-                // Pass data to CartActivity
-                cartIntent.putExtra("FOOD_NAME", name);
-                cartIntent.putExtra("FOOD_PRICE", price);
-
-                startActivity(cartIntent);
-            }
-        });
-
-        btnAddToCart.setOnClickListener(v -> {
-
-            Intent cartIntent = new Intent(FoodDetailActivity.this, CartActivity.class);
-
-            cartIntent.putExtra("FOOD_ID", foodId);
-            cartIntent.putExtra("FOOD_NAME", name);
-            cartIntent.putExtra("FOOD_PRICE", price);
-
-            startActivity(cartIntent);
         });
     }
 }

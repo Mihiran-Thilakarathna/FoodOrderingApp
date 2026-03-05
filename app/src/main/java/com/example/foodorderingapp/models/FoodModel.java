@@ -30,4 +30,13 @@ public class FoodModel {
     public double getPrice() {
         return price;
     }
+
+    // --- NEW: Setter methods to dynamically update the name and price (Required for Discounts) ---
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }
