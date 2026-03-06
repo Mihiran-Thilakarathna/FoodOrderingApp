@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri; // NEW
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,7 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.AlertDialog; // NEW: Imported for Notification Popup Dialog
+import android.app.AlertDialog;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodorderingapp.activities.CartActivity;
-import com.example.foodorderingapp.activities.FoodDetailActivity; // NEW: Imported to navigate to Detail page
+import com.example.foodorderingapp.activities.FoodDetailActivity;
 import com.example.foodorderingapp.activities.LoginActivity;
 import com.example.foodorderingapp.activities.MyOrderActivity;
 import com.example.foodorderingapp.activities.ProfileActivity;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     EditText etSearchFood;
     TextView tvNoFoodFound;
     TextView tvCatAll, tvCatBurger, tvCatPizza, tvCatRice, tvSeeAll;
+    ImageView imgTopProfile; // NEW
 
     // Flag to prevent searching conflicts when clicking categories
     boolean isCategoryFiltering = false;
@@ -73,21 +75,25 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // --- SET DYNAMIC USERNAME IN HEADER ---
+        dbHelper = new DBHelper(this); // Initialize DB First
+
+        // --- SET DYNAMIC USERNAME AND PROFILE PIC IN HEADER ---
         TextView tvWelcomeName = findViewById(R.id.tvWelcomeName);
+        imgTopProfile = findViewById(R.id.imgTopProfile);
+
         String currentUsername = sessionManager.getUsername();
         if(currentUsername != null) {
             tvWelcomeName.setText(currentUsername);
+            loadProfilePicture(currentUsername); // NEW: Load Custom Image!
         }
 
         // --- INIT TOP BUTTONS & SEARCH BAR ---
-        ImageView imgTopProfile = findViewById(R.id.imgTopProfile);
         imgTopProfile.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
 
-        // --- UPDATED: Notification Button to show a popup with Promo Codes ---
+        // Notification Button to show a popup with Promo Codes
         ImageView imgNotification = findViewById(R.id.imgNotification);
         imgNotification.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
@@ -99,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         });
 
-        // --- UPDATED: Shop Now Button navigates directly to FoodDetailActivity with 50% discount ---
+        // Shop Now Button navigates directly to FoodDetailActivity with 50% discount
         Button btnShopNow = findViewById(R.id.btnShopNow);
         btnShopNow.setOnClickListener(v -> {
             FoodModel promoFood = null;
@@ -113,12 +119,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (promoFood != null) {
-                // Navigate directly to FoodDetailActivity and pass the discounted details
                 Intent intent = new Intent(MainActivity.this, FoodDetailActivity.class);
                 intent.putExtra("FOOD_ID", promoFood.getId());
                 intent.putExtra("FOOD_NAME", promoFood.getName() + " (50% OFF)");
                 intent.putExtra("FOOD_DESC", promoFood.getDescription() + "\n\n🔥 Hot Deal Promo Applied!");
-                intent.putExtra("FOOD_PRICE", promoFood.getPrice() / 2.0); // 50% Discount applied here
+                intent.putExtra("FOOD_PRICE", promoFood.getPrice() / 2.0);
                 startActivity(intent);
             } else {
                 Toast.makeText(MainActivity.this, "Promo item not found!", Toast.LENGTH_SHORT).show();
@@ -132,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view_food);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
-        dbHelper = new DBHelper(this);
         foodList = new ArrayList<>();
         originalFoodList = new ArrayList<>();
 
@@ -144,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         // --- SETUP CATEGORIES & SEARCH ---
         initializeCategoryViews();
         setupCategoryClickListeners();
-        setupSearchListener(); // NEW: Setup the real-time search functionality
+        setupSearchListener();
 
         // --- BOTTOM NAVIGATION BAR SETUP ---
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -176,11 +180,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // --- FIXED: Updated Edge-To-Edge Window Insets Logic ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_home_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            // Apply padding to Top, Left, and Right for the root layout (Do NOT apply Bottom padding here)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+
+            // Apply the Bottom padding ONLY to the BottomNavigationView so it fills the white space
+            bottomNavigationView.setPadding(0, 0, 0, systemBars.bottom);
+
             return insets;
         });
+    }
+
+    // Refresh Profile picture if changed in ProfileActivity
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(sessionManager != null && sessionManager.isLoggedIn()) {
+            loadProfilePicture(sessionManager.getUsername());
+        }
+    }
+
+    // --- Fetch Image from DB and Set in Home Screen Header ---
+    private void loadProfilePicture(String username) {
+        Cursor cursor = dbHelper.getUserDetails(username);
+        if (cursor != null && cursor.moveToFirst()) {
+            int imgIndex = cursor.getColumnIndex("profile_image");
+            if(imgIndex != -1) {
+                String imgPath = cursor.getString(imgIndex);
+                if(imgPath != null && !imgPath.isEmpty()){
+                    try {
+                        imgTopProfile.setImageURI(Uri.parse(imgPath));
+                    } catch (Exception e) {
+                        imgTopProfile.setImageResource(R.drawable.ic_dummy_profile);
+                    }
+                }
+            }
+        }
+        if(cursor != null) cursor.close();
     }
 
     private void loadFoodData() {
@@ -200,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
     }
 
-    // --- NEW METHOD: Real-time Search Listener ---
+    // Real-time Search Listener
     private void setupSearchListener() {
         etSearchFood.addTextChangedListener(new TextWatcher() {
             @Override
@@ -208,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Ignore if the text change was caused by clicking a category button
                 if (!isCategoryFiltering) {
                     filterSearch(s.toString());
                 }
@@ -219,24 +257,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // --- NEW METHOD: Filter the list based on Search Bar input ---
+    // Filter the list based on Search Bar input
     private void filterSearch(String query) {
-        // Visually reset category selection to "All" when user starts typing
         updateCategoryStyles(tvCatAll);
 
         List<FoodModel> filteredList = new ArrayList<>();
         for (FoodModel food : originalFoodList) {
-            // Check if food name or description contains the search text
             if (food.getName().toLowerCase().contains(query.toLowerCase()) ||
                     food.getDescription().toLowerCase().contains(query.toLowerCase())) {
                 filteredList.add(food);
             }
         }
 
-        // Send updated list to the adapter
         adapter.updateList(filteredList);
 
-        // Show/Hide the "Not Found" message depending on results
         if (filteredList.isEmpty()) {
             tvNoFoodFound.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
@@ -266,9 +300,8 @@ public class MainActivity extends AppCompatActivity {
     private void filterCategory(String categoryName, TextView selectedView) {
         updateCategoryStyles(selectedView);
 
-        // Temporarily flag that we are filtering by category so the search listener doesn't trigger twice
         isCategoryFiltering = true;
-        etSearchFood.setText(""); // Clear the search bar
+        etSearchFood.setText("");
         etSearchFood.clearFocus();
         isCategoryFiltering = false;
 
@@ -291,7 +324,6 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.updateList(filteredList);
 
-        // Handle empty states for category filters just in case
         if (filteredList.isEmpty()) {
             tvNoFoodFound.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);

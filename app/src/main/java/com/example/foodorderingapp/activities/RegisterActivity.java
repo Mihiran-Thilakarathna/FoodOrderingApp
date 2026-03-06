@@ -7,7 +7,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge; // NEW
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets; // NEW
+import androidx.core.view.ViewCompat; // NEW
+import androidx.core.view.WindowInsetsCompat; // NEW
+
 import com.example.foodorderingapp.R;
 import com.example.foodorderingapp.database.DBHelper;
 import java.security.MessageDigest;
@@ -23,7 +29,15 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- FIXED: Enable Edge-To-Edge ---
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
+
+        // --- FIXED: Hide the default purple Action Bar ---
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         // Initialize Database Helper
         dbHelper = new DBHelper(this);
@@ -87,6 +101,13 @@ public class RegisterActivity extends AppCompatActivity {
                 // and return the user to the underlying Login screen without creating a new instance
                 finish();
             }
+        });
+
+        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_register_layout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
     }
 

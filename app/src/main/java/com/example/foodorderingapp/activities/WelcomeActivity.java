@@ -3,7 +3,12 @@ package com.example.foodorderingapp.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+
+import androidx.activity.EdgeToEdge; // NEW: Imported for complete full-screen logic
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets; // NEW: Imported for correct full-screen handling
+import androidx.core.view.ViewCompat; // NEW: Imported for correct full-screen handling
+import androidx.core.view.WindowInsetsCompat; // NEW: Imported for correct full-screen handling
 
 import com.example.foodorderingapp.MainActivity;
 import com.example.foodorderingapp.R;
@@ -17,6 +22,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- FIXED: Enable Edge-To-Edge for complete full-screen logic ---
+        EdgeToEdge.enable(this);
 
         // Initialize SessionManager
         sessionManager = new SessionManager(this);
@@ -32,6 +40,11 @@ public class WelcomeActivity extends AppCompatActivity {
         // If not logged in, show the welcome screen
         setContentView(R.layout.activity_welcome);
 
+        // --- FIXED: Hide the default purple Action Bar for professional design ---
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         btnGetStarted = findViewById(R.id.btnGetStarted);
 
         // Navigate to LoginActivity when "Get Started" is clicked
@@ -39,6 +52,13 @@ public class WelcomeActivity extends AppCompatActivity {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
             finish(); // Prevent user from returning to Welcome screen using the back button
+        });
+
+        // --- FIXED: Window Insets Logic to ensure clean full-screen layout without bottom white space ---
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_welcome_layout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
     }
 }

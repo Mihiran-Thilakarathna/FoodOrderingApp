@@ -128,14 +128,14 @@
                     <Button
                         android:id="@+id/btnShopNow"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="48dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginBottom="15dp"
                         android:backgroundTint="@color/white"
                         android:text="Shop Now"
                         android:textColor="#FF5722"
                         android:textStyle="bold"
-                        app:cornerRadius="20dp"
+                        app:cornerRadius="12dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 

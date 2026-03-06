@@ -1,16 +1,23 @@
 package com.example.foodorderingapp.activities;
 
+import android.app.AlertDialog; // NEW: Imported for Logout Confirmation Dialog
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge; // NEW
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets; // NEW
+import androidx.core.view.ViewCompat; // NEW
+import androidx.core.view.WindowInsetsCompat; // NEW
 
 import com.example.foodorderingapp.MainActivity;
 import com.example.foodorderingapp.R;
@@ -21,8 +28,9 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    TextView tvUsername, tvEmail, tvPhone;
-    Button btnLogout;
+    TextView tvProfileName, tvShowEmail, tvShowPhone, tvShowAddress;
+    ImageView imgProfilePic;
+    Button btnLogout, btnEditProfile;
     DBHelper dbHelper;
     SessionManager sessionManager;
     BottomNavigationView bottomNavigationView;
@@ -30,17 +38,28 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- FIXED: Enable Edge-To-Edge ---
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
+
+        // --- FIXED: Hide the default purple Action Bar ---
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         // Initialize Database and Session
         dbHelper = new DBHelper(this);
         sessionManager = new SessionManager(this);
 
         // Initialize UI Components
-        tvUsername = findViewById(R.id.tvProfileUsername);
-        tvEmail = findViewById(R.id.tvProfileEmail);
-        tvPhone = findViewById(R.id.tvProfilePhone);
+        tvProfileName = findViewById(R.id.tvProfileName);
+        tvShowEmail = findViewById(R.id.tvShowEmail);
+        tvShowPhone = findViewById(R.id.tvShowPhone);
+        tvShowAddress = findViewById(R.id.tvShowAddress);
+        imgProfilePic = findViewById(R.id.imgProfilePic);
         btnLogout = findViewById(R.id.btnLogout);
+        btnEditProfile = findViewById(R.id.btnEditProfile);
 
         // Get the logged-in username from Session
         String username = sessionManager.getUsername();
@@ -48,19 +67,32 @@ public class ProfileActivity extends AppCompatActivity {
         // Load details from Database
         loadUserProfile(username);
 
-        // Logout Button Click Listener
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Clear session and go back to Login
-                sessionManager.logoutUser();
+        // Edit Profile Button Logic
+        btnEditProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            startActivity(intent);
+        });
 
-                // Navigate back to LoginActivity and clear back stack
-                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
+        // --- UPDATED: Logout Button Click Listener with Confirmation Dialog ---
+        btnLogout.setOnClickListener(v -> {
+            new AlertDialog.Builder(ProfileActivity.this)
+                    .setTitle("Log Out")
+                    .setMessage("Are you sure want to Log Out?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // Clear session and go back to Login if Yes is clicked
+                        sessionManager.logoutUser();
+
+                        // Navigate back to LoginActivity and clear back stack
+                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {
+                        // Just dismiss the dialog if No is clicked
+                        dialog.dismiss();
+                    })
+                    .show();
         });
 
         // --- BOTTOM NAVIGATION BAR SETUP ---
@@ -96,26 +128,55 @@ public class ProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_profile_layout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            bottomNavigationView.setPadding(0, 0, 0, systemBars.bottom);
+            return insets;
+        });
+    }
+
+    // Refresh data when returning from Edit Screen
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserProfile(sessionManager.getUsername());
     }
 
     private void loadUserProfile(String username) {
         Cursor cursor = dbHelper.getUserDetails(username);
 
-        if (cursor.getCount() == 0) {
-            Toast.makeText(this, "Error: No details found", Toast.LENGTH_SHORT).show();
-        } else {
-            // Move cursor to first row
-            if (cursor.moveToFirst()) {
-                // Assuming columns are: username, password, email, phone
-                // We use getColumnIndex to be safe
-                String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
-                String phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"));
+        if (cursor != null && cursor.moveToFirst()) {
+            String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+            String phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"));
 
-                // Set data to TextViews
-                tvUsername.setText(username);
-                tvEmail.setText(email);
-                tvPhone.setText(phone);
+            // Load Address and Image
+            int addressIndex = cursor.getColumnIndex("address");
+            String address = (addressIndex != -1) ? cursor.getString(addressIndex) : "Not Set";
+
+            int imgIndex = cursor.getColumnIndex("profile_image");
+            String imgPath = (imgIndex != -1) ? cursor.getString(imgIndex) : "";
+
+            // Set data to TextViews
+            tvProfileName.setText(username);
+            tvShowEmail.setText(email);
+            tvShowPhone.setText(phone);
+            tvShowAddress.setText(address);
+
+            // Load Profile Picture if exists
+            if(imgPath != null && !imgPath.isEmpty()){
+                try {
+                    imgProfilePic.setImageURI(Uri.parse(imgPath));
+                } catch (Exception e) {
+                    imgProfilePic.setImageResource(R.drawable.ic_dummy_profile);
+                }
+            } else {
+                imgProfilePic.setImageResource(R.drawable.ic_dummy_profile);
             }
+        } else {
+            Toast.makeText(this, "Error: No details found", Toast.LENGTH_SHORT).show();
         }
 
         if (cursor != null) {

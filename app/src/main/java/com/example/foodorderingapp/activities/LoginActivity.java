@@ -8,7 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge; // NEW
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets; // NEW
+import androidx.core.view.ViewCompat; // NEW
+import androidx.core.view.WindowInsetsCompat; // NEW
+
 import com.example.foodorderingapp.MainActivity;
 import com.example.foodorderingapp.R;
 import com.example.foodorderingapp.database.DBHelper;
@@ -27,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // --- FIXED: Enable Edge-To-Edge ---
+        EdgeToEdge.enable(this);
+
         // 1. Initialize SessionManager
         sessionManager = new SessionManager(getApplicationContext());
 
@@ -40,6 +49,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_login);
+
+        // --- FIXED: Hide the default purple Action Bar ---
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         dbHelper = new DBHelper(this);
 
@@ -88,6 +102,13 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
+        });
+
+        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_login_layout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
     }
 

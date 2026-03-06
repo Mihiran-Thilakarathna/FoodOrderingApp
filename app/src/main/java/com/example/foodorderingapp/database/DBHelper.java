@@ -8,29 +8,35 @@ import android.database.Cursor;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    // IMPORTANT: Changed Version from 1 to 2 to trigger onUpgrade and add new columns safely
     public static final String DBNAME = "FoodApp.db";
+    public static final int DBVERSION = 2; // NEW: Version upgraded
 
     // Table Names
     public static final String TABLE_USERS = "users";
     public static final String TABLE_FOOD = "food_items";
     public static final String TABLE_ORDERS = "orders";
+    public static final String TABLE_CART = "cart";
 
     // User Table Columns
     public static final String COL_USERNAME = "username";
     public static final String COL_PASSWORD = "password"; // Must be encrypted
 
     public DBHelper(Context context) {
-        super(context, DBNAME, null, 1);
+        super(context, DBNAME, null, DBVERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase MyDB) {
         // 1. Create Users Table
+        // --- NEW: Added 'address' and 'profile_image' columns to users table ---
         MyDB.execSQL("create Table " + TABLE_USERS + "(" +
                 "username TEXT primary key, " +
                 "password TEXT, " +
                 "email TEXT, " +
-                "phone TEXT)");
+                "phone TEXT, " +
+                "address TEXT, " +
+                "profile_image TEXT)");
 
         // Create Food Items Table
         MyDB.execSQL("create Table " + TABLE_FOOD + "(" +
@@ -41,7 +47,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "image_resource INTEGER)"); // We can store drawable ID for simplicity
 
         // Create Orders Table WITH FOREIGN KEY
-        // Linking orders to a specific user (username)
         MyDB.execSQL("create Table " + TABLE_ORDERS + "(" +
                 "order_id INTEGER primary key autoincrement, " +
                 "username TEXT, " +
@@ -49,19 +54,29 @@ public class DBHelper extends SQLiteOpenHelper {
                 "quantity INTEGER, " +
                 "total_price DOUBLE, " +
                 "status TEXT, " +
+                "order_date DATETIME DEFAULT (datetime('now','localtime')), " +
                 "FOREIGN KEY(username) REFERENCES " + TABLE_USERS + "(username), " +
                 "FOREIGN KEY(food_id) REFERENCES " + TABLE_FOOD + "(id))");
+
+        // Create Cart Table
+        MyDB.execSQL("create Table " + TABLE_CART + "(" +
+                "cart_id INTEGER primary key autoincrement, " +
+                "username TEXT, " +
+                "food_name TEXT, " +
+                "price DOUBLE, " +
+                "quantity INTEGER)");
 
         // Pre-insert 20 Sri Lankan & Popular food items (Seeding)
         seedFoodItems(MyDB);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase MyDB, int i, int i1) {
-        MyDB.execSQL("drop Table if exists " + TABLE_USERS);
-        MyDB.execSQL("drop Table if exists " + TABLE_FOOD);
-        MyDB.execSQL("drop Table if exists " + TABLE_ORDERS);
-        onCreate(MyDB);
+    public void onUpgrade(SQLiteDatabase MyDB, int oldVersion, int newVersion) {
+        // --- NEW: If database is upgraded, add new columns to existing Users table instead of dropping it ---
+        if (oldVersion < 2) {
+            MyDB.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN address TEXT DEFAULT 'Not Set'");
+            MyDB.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN profile_image TEXT DEFAULT ''");
+        }
     }
 
     // Method to insert initial 20 food data items
@@ -77,7 +92,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Egg Hopper', 'Crispy hopper with a soft baked egg inside', 100.00)");
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Lamprais', 'Traditional Dutch burgher meal wrapped in banana leaf', 1500.00)");
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Roast Paan & Curry', 'Wood-fired roast bread with spicy pork or chicken curry', 650.00)");
-
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chicken Burger', 'Crispy chicken patty with fresh lettuce and mayo', 650.00)");
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Double Cheese Burger', 'Double beef patty with melted cheese and pickles', 1250.00)");
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Spicy Chicken Sub', 'Footlong submarine sandwich with spicy chicken fillings', 950.00)");
@@ -90,16 +104,16 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_FOOD + " (name, description, price) VALUES ('Chocolate Biscuit Pudding', 'Classic Sri Lankan dessert layered with chocolate', 400.00)");
     }
 
-    // Insert User Logic
+    // Insert User Logic (Updated with Default empty fields for new columns)
     public boolean registerUser(String username, String email, String password, String phone) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-
         values.put(COL_USERNAME, username);
         values.put(COL_PASSWORD, password);
         values.put("email", email);
         values.put("phone", phone);
-
+        values.put("address", "Not Set"); // NEW: Default Address
+        values.put("profile_image", ""); // NEW: Default empty image path
         long result = db.insert(TABLE_USERS, null, values);
         return result != -1;
     }
@@ -129,33 +143,108 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    // --- NEW: Update User Profile Details ---
+    public boolean updateUserProfile(String username, String email, String phone, String address, String imagePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("email", email);
+        values.put("phone", phone);
+        values.put("address", address);
+        values.put("profile_image", imagePath);
+
+        long result = db.update(TABLE_USERS, values, "username=?", new String[]{username});
+        return result != -1;
+    }
+
     // Method to retrieve all food items from the 'food_items' table
     public Cursor getAllFoodItems() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_FOOD, null);
     }
 
+    // Helper method to find food_id by food_name
+    public int getFoodIdByName(String foodName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String cleanName = foodName.replace(" (50% OFF)", "");
+        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_FOOD + " WHERE name = ?", new String[]{cleanName});
+        int id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(0);
+        }
+        cursor.close();
+        return id;
+    }
+
     // Insert Order
     public boolean insertOrder(String username, int foodId, int quantity, double totalPrice, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-
         values.put("username", username);
         values.put("food_id", foodId);
         values.put("quantity", quantity);
         values.put("total_price", totalPrice);
         values.put("status", status);
-
         long result = db.insert(TABLE_ORDERS, null, values);
         return result != -1;
     }
 
-    // Fetch User Orders with Food Name (Fixed Null Error)
+    // Fetch User Orders with Food Name
     public Cursor getUserOrders(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT f.name, o.status FROM " + TABLE_ORDERS + " o " +
+        String query = "SELECT f.name, o.status, o.quantity, o.total_price, o.order_date FROM " + TABLE_ORDERS + " o " +
                 "INNER JOIN " + TABLE_FOOD + " f ON o.food_id = f.id " +
-                "WHERE o.username = ?";
+                "WHERE o.username = ? ORDER BY o.order_id DESC";
         return db.rawQuery(query, new String[]{username});
+    }
+
+    // Add Item to Cart
+    public boolean addToCart(String username, String foodName, double price, int quantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CART + " WHERE username=? AND food_name=?", new String[]{username, foodName});
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            int existingQuantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
+            int cartId = cursor.getInt(cursor.getColumnIndexOrThrow("cart_id"));
+            cursor.close();
+            ContentValues values = new ContentValues();
+            values.put("quantity", existingQuantity + quantity);
+            long result = db.update(TABLE_CART, values, "cart_id=?", new String[]{String.valueOf(cartId)});
+            return result != -1;
+        } else {
+            cursor.close();
+            ContentValues values = new ContentValues();
+            values.put("username", username);
+            values.put("food_name", foodName);
+            values.put("price", price);
+            values.put("quantity", quantity);
+            long result = db.insert(TABLE_CART, null, values);
+            return result != -1;
+        }
+    }
+
+    // Get all cart items for a user
+    public Cursor getCartItems(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_CART + " WHERE username=?", new String[]{username});
+    }
+
+    // Update Cart Item Quantity
+    public void updateCartQuantity(int cartId, int newQuantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("quantity", newQuantity);
+        db.update(TABLE_CART, values, "cart_id=?", new String[]{String.valueOf(cartId)});
+    }
+
+    // Remove Item from Cart
+    public void removeFromCart(int cartId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CART, "cart_id=?", new String[]{String.valueOf(cartId)});
+    }
+
+    // Clear Cart after placing order
+    public void clearCart(String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CART, "username=?", new String[]{username});
     }
 }
