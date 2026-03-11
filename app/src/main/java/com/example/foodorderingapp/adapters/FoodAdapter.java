@@ -40,7 +40,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         this.foodList = foodList;
     }
 
-    // --- NEW METHOD: Dynamically update the list when a category is filtered ---
+    // --- Dynamically update the list when a category is filtered ---
     public void updateList(List<FoodModel> filteredList) {
         this.foodList = filteredList;
         notifyDataSetChanged(); // Refresh the RecyclerView with new data

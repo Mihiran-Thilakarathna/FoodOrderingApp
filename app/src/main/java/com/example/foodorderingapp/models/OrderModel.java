@@ -5,7 +5,7 @@ public class OrderModel {
     private String status; // "Completed" or "Pending"
     private double price;
     private int quantity;
-    private String orderDate; // NEW: Added to store the date and time
+    private String orderDate; // Added to store the date and time
 
     // Constructor to initialize the OrderModel with date
     public OrderModel(String foodName, String status, double price, int quantity, String orderDate) {

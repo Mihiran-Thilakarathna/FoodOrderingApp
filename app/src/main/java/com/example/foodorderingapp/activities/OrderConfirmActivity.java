@@ -21,11 +21,11 @@ public class OrderConfirmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
+        // --- Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_order_confirm);
 
-        // --- FIXED: Hide the default purple Action Bar ---
+        // --- Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -42,7 +42,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
             finish();
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // --- Window Insets Logic to remove bottom white space ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_order_confirm_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

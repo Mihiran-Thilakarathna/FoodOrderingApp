@@ -8,9 +8,8 @@ import android.database.Cursor;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    // IMPORTANT: Changed Version from 1 to 2 to trigger onUpgrade and add new columns safely
     public static final String DBNAME = "FoodApp.db";
-    public static final int DBVERSION = 2; // NEW: Version upgraded
+    public static final int DBVERSION = 2;
 
     // Table Names
     public static final String TABLE_USERS = "users";
@@ -20,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // User Table Columns
     public static final String COL_USERNAME = "username";
-    public static final String COL_PASSWORD = "password"; // Must be encrypted
+    public static final String COL_PASSWORD = "password";
 
     public DBHelper(Context context) {
         super(context, DBNAME, null, DBVERSION);
@@ -29,7 +28,6 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase MyDB) {
         // 1. Create Users Table
-        // --- NEW: Added 'address' and 'profile_image' columns to users table ---
         MyDB.execSQL("create Table " + TABLE_USERS + "(" +
                 "username TEXT primary key, " +
                 "password TEXT, " +
@@ -72,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase MyDB, int oldVersion, int newVersion) {
-        // --- NEW: If database is upgraded, add new columns to existing Users table instead of dropping it ---
+        // --- If database is upgraded, add new columns to existing Users table instead of dropping it ---
         if (oldVersion < 2) {
             MyDB.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN address TEXT DEFAULT 'Not Set'");
             MyDB.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN profile_image TEXT DEFAULT ''");
@@ -112,16 +110,17 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COL_PASSWORD, password);
         values.put("email", email);
         values.put("phone", phone);
-        values.put("address", "Not Set"); // NEW: Default Address
-        values.put("profile_image", ""); // NEW: Default empty image path
+        values.put("address", "Not Set");
+        values.put("profile_image", "");
         long result = db.insert(TABLE_USERS, null, values);
         return result != -1;
     }
 
     // Check if user already exists
     public boolean checkUsername(String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ?", new String[]{username});
+        SQLiteDatabase db = this.getReadableDatabase();
+        // --- Use COLLATE NOCASE to make username case-insensitive ---
+        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username COLLATE NOCASE = ?", new String[]{username});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         return exists;
@@ -129,8 +128,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Check Username and Password (Login Logic)
     public boolean checkUser(String username, String password) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ? and password = ?", new String[]{username, password});
+        SQLiteDatabase db = this.getReadableDatabase();
+        // --- Use COLLATE NOCASE to make username case-insensitive for login ---
+        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username COLLATE NOCASE = ? and password = ?", new String[]{username, password});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         return exists;
@@ -139,11 +139,12 @@ public class DBHelper extends SQLiteOpenHelper {
     // Get User Details by Username
     public android.database.Cursor getUserDetails(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username = ?", new String[]{username});
+        // --- Use COLLATE NOCASE to fetch user details correctly regardless of case ---
+        Cursor cursor = db.rawQuery("Select * from " + TABLE_USERS + " where username COLLATE NOCASE = ?", new String[]{username});
         return cursor;
     }
 
-    // --- NEW: Update User Profile Details ---
+    // --- Update User Profile Details ---
     public boolean updateUserProfile(String username, String email, String phone, String address, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -152,7 +153,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("address", address);
         values.put("profile_image", imagePath);
 
-        long result = db.update(TABLE_USERS, values, "username=?", new String[]{username});
+        // --- Use COLLATE NOCASE for updating profile ---
+        long result = db.update(TABLE_USERS, values, "username COLLATE NOCASE = ?", new String[]{username});
         return result != -1;
     }
 
@@ -191,16 +193,18 @@ public class DBHelper extends SQLiteOpenHelper {
     // Fetch User Orders with Food Name
     public Cursor getUserOrders(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
+        // --- Use COLLATE NOCASE for orders ---
         String query = "SELECT f.name, o.status, o.quantity, o.total_price, o.order_date FROM " + TABLE_ORDERS + " o " +
                 "INNER JOIN " + TABLE_FOOD + " f ON o.food_id = f.id " +
-                "WHERE o.username = ? ORDER BY o.order_id DESC";
+                "WHERE o.username COLLATE NOCASE = ? ORDER BY o.order_id DESC";
         return db.rawQuery(query, new String[]{username});
     }
 
     // Add Item to Cart
     public boolean addToCart(String username, String foodName, double price, int quantity) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CART + " WHERE username=? AND food_name=?", new String[]{username, foodName});
+        // --- Use COLLATE NOCASE for cart check ---
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CART + " WHERE username COLLATE NOCASE = ? AND food_name=?", new String[]{username, foodName});
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             int existingQuantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
@@ -225,7 +229,8 @@ public class DBHelper extends SQLiteOpenHelper {
     // Get all cart items for a user
     public Cursor getCartItems(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_CART + " WHERE username=?", new String[]{username});
+        // --- Use COLLATE NOCASE for cart items ---
+        return db.rawQuery("SELECT * FROM " + TABLE_CART + " WHERE username COLLATE NOCASE = ?", new String[]{username});
     }
 
     // Update Cart Item Quantity
@@ -245,6 +250,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // Clear Cart after placing order
     public void clearCart(String username) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CART, "username=?", new String[]{username});
+        // --- Use COLLATE NOCASE for clearing cart ---
+        db.delete(TABLE_CART, "username COLLATE NOCASE = ?", new String[]{username});
     }
 }

@@ -63,11 +63,9 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
 
-        // --- FIXED: Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -117,7 +115,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // Window Insets Logic to remove bottom white space
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_edit_profile_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

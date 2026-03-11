@@ -23,7 +23,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge for complete full-screen logic ---
+        // --- Enable Edge-To-Edge for complete full-screen logic ---
         EdgeToEdge.enable(this);
 
         // Initialize SessionManager
@@ -40,7 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
         // If not logged in, show the welcome screen
         setContentView(R.layout.activity_welcome);
 
-        // --- FIXED: Hide the default purple Action Bar for professional design ---
+        // Hide the default purple Action Bar for professional design
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -54,7 +54,7 @@ public class WelcomeActivity extends AppCompatActivity {
             finish(); // Prevent user from returning to Welcome screen using the back button
         });
 
-        // --- FIXED: Window Insets Logic to ensure clean full-screen layout without bottom white space ---
+        // Window Insets Logic to ensure clean full-screen layout without bottom white space
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_welcome_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

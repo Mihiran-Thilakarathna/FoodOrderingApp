@@ -54,11 +54,9 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cart);
 
-        // --- FIXED: Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -95,7 +93,7 @@ public class CartActivity extends AppCompatActivity {
                 // Find correct food ID based on the name
                 int actualFoodId = dbHelper.getFoodIdByName(item.getFoodName());
 
-                // --- FIXED: Added deliveryFee to calculate the exact Total Payment ---
+                // Added deliveryFee to calculate the exact Total Payment ---
                 double itemTotalPrice = (item.getPrice() * item.getQuantity()) + deliveryFee;
 
                 // Insert into Orders table as 'Completed'
@@ -117,7 +115,7 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
-        // --- BOTTOM NAVIGATION BAR SETUP ---
+        // BOTTOM NAVIGATION BAR SETUP
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_cart);
 
@@ -150,7 +148,7 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // Window Insets Logic to remove bottom white space
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_cart_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             // Apply padding to Top, Left, Right for root
@@ -161,7 +159,7 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-    // --- Load Data from Cart Table ---
+    // Load Data from Cart Table
     private void loadCartData() {
         cartList.clear();
         Cursor cursor = dbHelper.getCartItems(username);
@@ -183,7 +181,7 @@ public class CartActivity extends AppCompatActivity {
         checkEmptyState();
     }
 
-    // --- Calculate Total Bill dynamically ---
+    // Calculate Total Bill dynamically
     public void calculateTotal() {
         double subTotal = 0.0;
         for (CartModel item : cartList) {
@@ -204,7 +202,7 @@ public class CartActivity extends AppCompatActivity {
         checkEmptyState();
     }
 
-    // --- Show/Hide empty state ---
+    // Show/Hide empty state
     private void checkEmptyState() {
         if(cartList.isEmpty()){
             layoutEmptyCart.setVisibility(View.VISIBLE);

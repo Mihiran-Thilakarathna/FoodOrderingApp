@@ -44,11 +44,11 @@ public class MyOrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
+        // --- Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_myorder);
 
-        // --- FIXED: Hide the default purple Action Bar ---
+        // --- Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -102,7 +102,7 @@ public class MyOrderActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // --- Window Insets Logic to remove bottom white space ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_orders_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
@@ -136,7 +136,7 @@ public class MyOrderActivity extends AppCompatActivity {
             do {
                 String name = cartCursor.getString(cartCursor.getColumnIndexOrThrow("food_name"));
 
-                // --- FIXED: Add delivery fee to the pending items to match the Total Payment ---
+                // --- Add delivery fee to the pending items to match the Total Payment ---
                 double unitPrice = cartCursor.getDouble(cartCursor.getColumnIndexOrThrow("price"));
                 int qty = cartCursor.getInt(cartCursor.getColumnIndexOrThrow("quantity"));
                 double deliveryFee = 300.00; // Constant delivery fee

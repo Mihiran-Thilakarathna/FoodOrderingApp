@@ -50,7 +50,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         holder.tvCartFoodName.setText(cartItem.getFoodName());
 
-        // FIXED: Changed from $ to Rs.
         holder.tvCartFoodPrice.setText(String.format("Rs. %.2f", cartItem.getPrice()));
 
         // Format quantity to show two digits like "01", "02"

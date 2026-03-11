@@ -25,7 +25,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     // Declare UI components
     TextView tvName, tvPrice, tvDesc, tvQuantity;
     TextView btnMinus, btnPlus; // btnBack removed to prevent crashes
-    TextView btnHeart; // NEW: Heart icon textview
+    TextView btnHeart;
     ImageView imgDetailFood;
     Button btnAddToCart;
 
@@ -42,7 +42,6 @@ public class FoodDetailActivity extends AppCompatActivity {
         // Set the corresponding XML layout
         setContentView(R.layout.activity_food_detail);
 
-        // --- FIXED: Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -57,9 +56,8 @@ public class FoodDetailActivity extends AppCompatActivity {
         btnMinus = findViewById(R.id.btnMinus);
         btnPlus = findViewById(R.id.btnPlus);
         imgDetailFood = findViewById(R.id.imgDetailFood);
-        btnHeart = findViewById(R.id.btnHeart); // Initialize heart icon
+        btnHeart = findViewById(R.id.btnHeart);
 
-        // btnBack initialization removed
 
         // Retrieve the data passed from the FoodAdapter or MainActivity via Intent Extras
         Intent intent = getIntent();
@@ -71,7 +69,7 @@ public class FoodDetailActivity extends AppCompatActivity {
         // Set the retrieved name to the TextView
         tvName.setText(name);
 
-        // FIX: Set the Top Base Price ONLY ONCE here. It will NOT change when quantity changes.
+        // Set the Top Base Price ONLY ONCE here. It will NOT change when quantity changes.
         tvPrice.setText(String.format("Rs. %.2f", basePrice));
 
         // Load the correct dynamic image based on food name
@@ -106,7 +104,7 @@ public class FoodDetailActivity extends AppCompatActivity {
 
         // btnBack onClickListener removed
 
-        // --- NEW: Heart Icon Toggle Logic ---
+        // --- Heart Icon Toggle Logic ---
         btnHeart.setOnClickListener(v -> {
             isFavorite = !isFavorite; // Toggle the favorite status
 
@@ -136,7 +134,7 @@ public class FoodDetailActivity extends AppCompatActivity {
             }
         });
 
-        // --- UPDATED: Save to SQLite Cart Table instead of passing via Intent ---
+        // ---Save to SQLite Cart Table instead of passing via Intent ---
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +166,7 @@ public class FoodDetailActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic ---
+        // ---Window Insets Logic ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_food_detail_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             // Apply padding to Top, Left, Right for root
@@ -183,13 +181,13 @@ public class FoodDetailActivity extends AppCompatActivity {
         });
     }
 
-    // --- FIXED METHOD: Only updates the button text, NOT the top static price ---
+    // ---Only updates the button text, NOT the top static price ---
     private void updateButtonPriceDisplay() {
         double total = basePrice * quantity;
         btnAddToCart.setText(String.format("Add to Cart - Rs. %.2f", total));
     }
 
-    // --- Helper method to dynamically map food names to their images ---
+    // Helper method to dynamically map food names to their images ---
     private int getImageResource(String foodName) {
         // Clean the name in case it has the "(50% OFF)" tag from the Promo
         String cleanName = foodName.replace(" (50% OFF)", "");

@@ -3,7 +3,7 @@ package com.example.foodorderingapp.models;
 public class FoodModel {
     private int id;
     private String name;
-    private String description;  // Short description of the food
+    private String description;
     private double price;
 
     // Constructor to initialize the FoodModel object
@@ -31,7 +31,7 @@ public class FoodModel {
         return price;
     }
 
-    // --- NEW: Setter methods to dynamically update the name and price (Required for Discounts) ---
+    // --- Setter methods to dynamically update the name and price (Required for Discounts) ---
     public void setName(String name) {
         this.name = name;
     }

@@ -45,7 +45,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         // Set image dynamically based on food name
         holder.imgOrderFood.setImageResource(getImageResource(order.getFoodName()));
 
-        // --- NEW: Change Badge Color and Show Date based on Status ---
+        // Change Badge Color and Show Date based on Status
         holder.tvOrderStatus.setText(order.getStatus());
 
         if (order.getStatus().equalsIgnoreCase("Completed")) {

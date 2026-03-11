@@ -39,11 +39,10 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
+        // --- Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
-        // --- FIXED: Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -73,7 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // --- UPDATED: Logout Button Click Listener with Confirmation Dialog ---
+        // --- Logout Button Click Listener with Confirmation Dialog ---
         btnLogout.setOnClickListener(v -> {
             new AlertDialog.Builder(ProfileActivity.this)
                     .setTitle("Log Out")
@@ -129,7 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // --- Window Insets Logic to remove bottom white space ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_profile_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);

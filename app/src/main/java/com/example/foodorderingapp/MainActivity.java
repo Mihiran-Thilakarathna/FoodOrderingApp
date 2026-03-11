@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri; // NEW
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     DBHelper dbHelper;
     List<FoodModel> foodList;
-    List<FoodModel> originalFoodList; // Master copy of all foods for filtering
+    List<FoodModel> originalFoodList;
     FoodAdapter adapter;
     BottomNavigationView bottomNavigationView;
 
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Updated Edge-To-Edge Window Insets Logic ---
+        // --- Updated Edge-To-Edge Window Insets Logic ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_home_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 

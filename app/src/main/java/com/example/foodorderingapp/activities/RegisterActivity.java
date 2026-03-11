@@ -2,17 +2,18 @@ package com.example.foodorderingapp.activities;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns; // Imported for Email Validation
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge; // NEW
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets; // NEW
-import androidx.core.view.ViewCompat; // NEW
-import androidx.core.view.WindowInsetsCompat; // NEW
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.foodorderingapp.R;
 import com.example.foodorderingapp.database.DBHelper;
@@ -30,11 +31,10 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
+        // --- Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
-        // --- FIXED: Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -65,7 +65,16 @@ public class RegisterActivity extends AppCompatActivity {
                 // Input Validation: Check for empty fields
                 if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(email)) {
                     Toast.makeText(RegisterActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                // --- Email format validation logic ---
+                else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(RegisterActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+                }
+                // Password length validation (Minimum 8 characters)
+                else if (pass.length() < 8) {
+                    Toast.makeText(RegisterActivity.this, "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
+                }
+                else {
                     // Check if password and confirm password match
                     if (pass.equals(confirmPass)) {
                         // Check if the username already exists in the database
@@ -74,7 +83,7 @@ public class RegisterActivity extends AppCompatActivity {
                             // Encrypt Password (MANDATORY Guideline using SHA-256)
                             String encryptedPass = hashPassword(pass);
 
-                            // 3. Save the new user details to SQLite Database
+                            // Save the new user details to SQLite Database
                             boolean insert = dbHelper.registerUser(user, email, encryptedPass, phone);
                             if (insert) {
                                 Toast.makeText(RegisterActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
@@ -103,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // --- Window Insets Logic to remove bottom white space ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_register_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -111,8 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * SHA-256 Hashing Method (Security Feature)
+    /*SHA-256 Hashing Method (Security Feature)
      * Encrypts the plain text password before storing it in the database.
      */
     private String hashPassword(String password) {

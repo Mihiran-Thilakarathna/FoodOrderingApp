@@ -33,13 +33,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- FIXED: Enable Edge-To-Edge ---
+        // --- Enable Edge-To-Edge ---
         EdgeToEdge.enable(this);
 
-        // 1. Initialize SessionManager
+        // Initialize SessionManager
         sessionManager = new SessionManager(getApplicationContext());
 
-        // 2. Check if user is already logged in (Auto-Login Check)
+        // Check if user is already logged in (Auto-Login Check)
         if (sessionManager.isLoggedIn()) {
             // User is already logged in, redirect to Main Activity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        // --- FIXED: Hide the default purple Action Bar ---
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -75,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                     // Encrypt password
                     String encryptedPass = hashPassword(pass);
 
-                    // Check DB for valid credentials
+                    // Check DB for valid credentials (now case-insensitive in DBHelper)
                     boolean check = dbHelper.checkUser(user, encryptedPass);
 
                     if (check) {
@@ -89,7 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                        // --- Error message ---
+                        Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // --- FIXED: Window Insets Logic to remove bottom white space ---
+        // ---Window Insets Logic to remove bottom white space ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_login_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
