@@ -65,8 +65,8 @@ We utilized a **Vertical Slicing** approach, ensuring every member contributed t
 
 | Index No | Registration No | Name | Role & Core Responsibilities | GitHub Profile |
 | :---: | :---: | :--- | :--- | :---: |
-| 5707 | ICT/2022/104 | T.H.M. Thilakarathna | Auth, Profile & UI Integration: Login/Register, SHA-256, Profile Management, Overall UI Enhancements | [@Mihiran-Thilakarathna](https://github.com/Mihiran-Thilakarathna) |
-| 5708 | ICT/2022/105 | M.I Afthal Ahamad | Menu & Dashboard: **Home UI**, Food Detail View, Search/Filter Logic, RecyclerView setup, SQLite Food Seeding | [@afthal-ahamad01](https://github.com/afthal-ahamad01) |
+| 5707 | ICT/2022/104 | T.H.M. Thilakarathna | Auth, Profile & UI Integration: Login/Register, SHA-256, Profile Management,Home UI,Overall UI Enhancements | [@Mihiran-Thilakarathna](https://github.com/Mihiran-Thilakarathna) |
+| 5708 | ICT/2022/105 | M.I Afthal Ahamad | Menu & Dashboard: Food Detail View, Search/Filter Logic, RecyclerView setup, SQLite Food Seeding | [@afthal-ahamad01](https://github.com/afthal-ahamad01) |
 | 5709 | ICT/2022/106 | M.A.F Nuha | Cart & Orders: Cart UI, Order Confirmation, Unified Order History, Subtotal logic, User-specific data filtering | [@nuha-akil](https://github.com/nuha-akil) |
 
 ---
@@ -93,4 +93,4 @@ git clone https://github.com/Mihiran-Thilakarathna/FoodOrderingApp.git
 
 ---
 
-📘 *This project is submitted in partial fulfillment of the requirements for the ICT3214 module at Rajarata University of Sri Lanka.*
+
