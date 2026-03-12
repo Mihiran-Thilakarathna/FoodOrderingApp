@@ -128,4 +128,3 @@ git clone https://github.com/Mihiran-Thilakarathna/FoodOrderingApp.git
 
 ---
 
-📘 *This project is submitted in partial fulfillment of the requirements for the ICT3214 module at Rajarata University of Sri Lanka.*
