@@ -13,6 +13,41 @@ Built entirely with **Java** and **SQLite**, the app demonstrates robust local d
 
 ---
 
+## ✨ UI Showcase
+
+<table>
+  <tr>
+    <td align="center"><b>Welcome</b></td>
+    <td align="center"><b>Login</b></td>
+    <td align="center"><b>Register</b></td>
+    <td align="center"><b>Home</b></td>
+    <td align="center"><b>Food Details</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/welcome.jpeg" width="160"></td>
+    <td><img src="screenshots/login.jpeg" width="160"></td>
+    <td><img src="screenshots/register.jpeg" width="160"></td>
+    <td><img src="screenshots/home.jpeg" width="160"></td>
+    <td><img src="screenshots/details.jpeg" width="160"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Cart</b></td>
+    <td align="center"><b>Order Confirm</b></td>
+    <td align="center"><b>My Orders</b></td>
+    <td align="center"><b>Profile</b></td>
+    <td align="center"><b>Edit Profile</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/cart.jpeg" width="160"></td>
+    <td><img src="screenshots/order_confirm.jpeg" width="160"></td>
+    <td><img src="screenshots/orders.jpeg" width="160"></td>
+    <td><img src="screenshots/profile.jpeg" width="160"></td>
+    <td><img src="screenshots/edit_profile.jpeg" width="160"></td>
+  </tr>
+</table>
+
+---
+
 ## 🚀 Core Features & Highlights
 
 ### 🔒 Security & Authentication
@@ -65,7 +100,7 @@ We utilized a **Vertical Slicing** approach, ensuring every member contributed t
 
 | Index No | Registration No | Name | Role & Core Responsibilities | GitHub Profile |
 | :---: | :---: | :--- | :--- | :---: |
-| 5707 | ICT/2022/104 | T.H.M. Thilakarathna | Auth, Profile & UI Integration: Login/Register, SHA-256, Profile Management,Home UI,Overall UI Enhancements | [@Mihiran-Thilakarathna](https://github.com/Mihiran-Thilakarathna) |
+| 5707 | ICT/2022/104 | T.H.M. Thilakarathna | Auth, Profile & UI Integration: Login/Register, SHA-256, Profile Management, Home UI, Overall UI Enhancements | [@Mihiran-Thilakarathna](https://github.com/Mihiran-Thilakarathna) |
 | 5708 | ICT/2022/105 | M.I Afthal Ahamad | Menu & Dashboard: Food Detail View, Search/Filter Logic, RecyclerView setup, SQLite Food Seeding | [@afthal-ahamad01](https://github.com/afthal-ahamad01) |
 | 5709 | ICT/2022/106 | M.A.F Nuha | Cart & Orders: Cart UI, Order Confirmation, Unified Order History, Subtotal logic, User-specific data filtering | [@nuha-akil](https://github.com/nuha-akil) |
 
@@ -93,4 +128,4 @@ git clone https://github.com/Mihiran-Thilakarathna/FoodOrderingApp.git
 
 ---
 
-
+📘 *This project is submitted in partial fulfillment of the requirements for the ICT3214 module at Rajarata University of Sri Lanka.*
